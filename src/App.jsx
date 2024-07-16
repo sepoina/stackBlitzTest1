@@ -1,4 +1,3 @@
-import React from 'react';
 import useAction from './useAction';
 import avatarActionFunction from './avatarActionFunction';
 
