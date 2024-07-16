@@ -5,7 +5,7 @@ import avatarActionClass from "./avatarActionClass";
 export default function App() {
   const Avatar = useAction(
     //
-    // oggetto con funzioni di manipolazione
+    // classe con funzioni di manipolazione
     avatarActionClass,
     //
     // stato di inizializzazione
