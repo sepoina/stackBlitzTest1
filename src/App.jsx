@@ -1,8 +1,15 @@
 import useAction from "./useAction";
 import avatarActionFunction from "./avatarActionFunction";
+import { useState } from "react";
 
 // Esempio di utilizzo del hook
 export default function App() {
+
+
+  if (true) {
+    const theme = useState("ciao");
+    console.log(theme);
+  }
 
   const Avatar = useAction(avatarActionFunction, {
     avatar: null,
