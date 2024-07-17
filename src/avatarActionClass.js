@@ -1,37 +1,34 @@
-import { actionClassPrototype } from "./useAction";
+import { actionClassPrototype } from "./useActionClass";
 
 // Funzione action specifica per il caricamento dell'avatar
-class avatarActionClass extends actionClassPrototype{
-  
+class avatarActionClass extends actionClassPrototype {
   //
   // LOADING --------------------------------------------------------
   // https://reqres.in/
   //
-  // esempio lo status
-  //
-  // esternamente su Avatar.state.status
-  // internamente su this.state.value.status
-  //
-  // this.state.value      valore asincrono dello state
-  // this.state.syncValue  valore sempre aggiornato dello state
-  //                          "onBooting" - al boot, settato in inizializzazione
-  //                          "onLoading" - caricamento in corso
-  //                          "error"     - il caricamento non è andato a buon fine
-  //                          "okData"    - dati disponibili
-  // this.state.update     aggiornamento dello stato con un oggetto o altro
-  // this.state.set        sovrascrittura dello state
+  // State:
+  //    esternamente su Avatar.state
+  //    internamente su this.state (read and write rimbalzano su uno useState)
   //
   async load(user) {
-    this.state.set({ status: "onLoading" });
+    this.state = { status: "onLoading" };
     try {
       const response = await fetch(
         `https://reqres.in/api/users/${user}?delay=1`
       );
       const retVal = await response.json();
-      if (response.ok) this.state.set({ status: "okData", data: retVal?.data });
+      if (response.ok) this.state = { status: "okData", data: retVal?.data };
       else throw "not found";
     } catch (error) {
-      this.state.set({ status: "error", data: error });
+      this.state = { status: "error", data: error };
+    }
+  }
+
+  changeName(newName) {
+    console.log("changeName:", this.state);
+    if (this.state?.data?.first_name) {
+      alert("ciao");
+      this.state = { ...this.state, ...{ data: { first_name: newName } } };
     }
   }
 }

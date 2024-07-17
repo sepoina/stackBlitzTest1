@@ -39,6 +39,7 @@ function useImmediate(defaultValue) {
 
   // Setta lo state (prevede un oggetto nuovo in ingresso)
   const set = (newState) => {
+    // console.log("setInsideUseImmediate",newState);
     setState(newState);
     syncValueRef.current = newState; // Aggiorna il ref con il nuovo stato
   };

@@ -1,18 +1,21 @@
-import {useAction} from "./useAction";
+import { useActionClass } from "./useActionClass";
 import avatarActionClass from "./avatarActionClass";
 
 // Esempio di utilizzo del hook
 export default function App() {
-  const Avatar = useAction(
-    //
-    // classe con funzioni di manipolazione
-    avatarActionClass,
-    //
-    // stato di inizializzazione
+  //
+  // useActionClass torna:
+  //
+  //      state - lo stato
+  //   useState - il setting dello stato
+  //     action - l'elenco dei metodi della classe che ne consente la manipolazione
+  //
+  const Avatar = useActionClass(
+    avatarActionClass, // classe con funzioni di manipolazione
     {
-      avatar: null,
-      data:null,
+      // initial state
       status: "booting",
+      data: null,
     }
   );
 
@@ -20,6 +23,19 @@ export default function App() {
     if (Avatar.state.status !== "onLoading") {
       Avatar.action.load(parseInt(Math.random() * 15).toString());
     }
+  };
+
+  const handleOverWrite = () => {
+    Avatar.setState({
+      status: "okData",
+      data: {
+        id: 7,
+        email: "Arianna.Susanetti@reqres.in",
+        first_name: "Arianna",
+        last_name: "Susanetti",
+        avatar: "https://reqres.in/img/faces/7-image.jpg",
+      },
+    });
   };
 
   return (
@@ -43,8 +59,21 @@ export default function App() {
         onClick={handleLoad}
         disabled={Avatar.state.status === "onLoading"}
       >
-        Load Avatar
+        Load 1 second Random Avatar or generate Random Error
       </button>
+      <br />
+      <button
+        onClick={handleOverWrite}
+        disabled={Avatar.state.status === "onLoading"}
+      >
+        Force Arianna Susanetti id:7
+      </button>
+      <br />
+      {Avatar.state.status === "okData" && (
+        <button onClick={() => Avatar.action.changeName("Pierpaolo")}>
+          Change Name to pippo
+        </button>
+      )}
     </div>
   );
 }
