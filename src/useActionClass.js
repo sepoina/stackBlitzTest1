@@ -1,47 +1,54 @@
-import { useEffect, useRef } from "react";
-import useImmediate from "./useImmediate";
+import { useEffect, useRef, useState } from "react";
 
 //
 // Hook simile a useReducer ma consente la realizzazione di funzioni asincrone che
 // manipolano lo state
 //
-function useActionClass(reducerClass, initialState) {
+function useActionClass(actionClassDefinition, initialState) {
   //
-  // state.value      valore asincrono dello state
-  // state.syncValue  valore sempre aggiornato dello state
-  // state.update     aggiornamento dello stato con un oggetto o altro
-  // state.set        sovrascrittura dello state
+  // contenitore dello state
+  const statePointer = useState(initialState);
   //
-  const state = useImmediate(initialState);
   // deposito delle azioni consentite
-  const actionRef = useRef(new reducerClass(state));
-  // in caso di aggiornamenti di state aggiorna lo statepointer
-  useEffect(() => {
-    console.log("updateStatePointer");
-    actionRef.current._updateStatePointer(state);
-  }, []);
+  const actionClassRef = useRef(new actionClassDefinition());
+  //
+  // ogni aggiornamento allo state aggiorna lo statepointer della classe
+  useEffect(
+    () => actionClassRef.current._updateStatePointer(statePointer),
+    [statePointer]
+  );
 
-  return { state: state.value, setState: state.set, action: actionRef.current };
+  return {
+    state: statePointer[0],
+    setState: statePointer[1],
+    action: actionClassRef.current,
+  };
 }
 
-// classe
+//
+// prototipo della classe (da estendere)
+//
 class actionClassPrototype {
-  // Inizializza lo stato
-  constructor(immediateStatePointer) {
-    this.immediateStatePointer = immediateStatePointer;
-  }
-
+  // aggiorna il pointer allo state
   _updateStatePointer(newStatePointer) {
     this.immediateStatePointer = newStatePointer;
   }
 
   get state() {
-    return this.immediateStatePointer.syncValue; // sempre il valore più aggiornato
+    return this.immediateStatePointer[0]; // leggi lo state
   }
 
   set state(newValue) {
-    console.log("setState", newValue);
-    this.immediateStatePointer.set(newValue); // setta lo state dell'oggetto
+    this.immediateStatePointer[1](newValue); // setta lo state dell'oggetto
+  }
+
+  // se non nullo ed oggetto refreshalo copiandolo su di sè
+  _refreshState() {
+    if (
+      this.immediateStatePointer[0] &&
+      typeof this.immediateStatePointer[0] === "object"
+    )
+      this.immediateStatePointer[1]({ ...this.immediateStatePointer[0] }); // copia lo state su di sè per refreshare
   }
 }
 

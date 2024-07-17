@@ -7,9 +7,17 @@ class avatarActionClass extends actionClassPrototype {
   // https://reqres.in/
   //
   // State:
-  //    esternamente su Avatar.state
-  //    internamente su this.state (read and write rimbalzano su uno useState)
+  //    esternamente -> Avatar.state
+  //    internamente -> this.state (read and write rimbalzano su uno useState)
   //
+  // Metodi distribuiti da actionClassPrototype:
+  //    _refreshState: updata lo state (eventualmente aggiornato senza setState)
+  //
+  //
+
+
+  /** Carica asincrono un user
+   *  --------------------------------------------------------------------------- */
   async load(user) {
     this.state = { status: "onLoading" };
     try {
@@ -24,11 +32,13 @@ class avatarActionClass extends actionClassPrototype {
     }
   }
 
+  
+  /** Cambia il nome in caso di presenza di un nome
+   *  --------------------------------------------------------------------------- */
   changeName(newName) {
-    console.log("changeName:", this.state);
     if (this.state?.data?.first_name) {
-      alert("ciao");
-      this.state = { ...this.state, ...{ data: { first_name: newName } } };
+      this.state.data.first_name = newName;
+      this._refreshState(); // metodo per il refresh in loco
     }
   }
 }
